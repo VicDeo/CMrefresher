@@ -13,13 +13,13 @@
     android:text="Status"
     />
 <TextView  
-    android:id="@+id/statusLine"
+    android:id="@+id/line"
     android:layout_width="wrap_content" 
     android:layout_height="wrap_content" 
     android:layout_alignParentTop="true"
     android:layout_toRightOf="@+id/status"
     android:textSize="18sp"
-    android:text="Status"
+    android:text="line"
     />
  <ListView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
