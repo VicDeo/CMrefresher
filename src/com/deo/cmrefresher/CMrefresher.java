@@ -1,7 +1,5 @@
 package com.deo.cmrefresher;
 
-import java.util.List;
-import java.util.ListIterator;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -12,11 +10,17 @@ import java.io.InputStreamReader;
 
 import android.app.ListActivity;
 import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.ListAdapter;
-import android.widget.SimpleAdapter;
 
 import android.widget.TextView;
+import android.widget.ListView;
+
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ArrayAdapter;
 
 public class CMrefresher extends ListActivity {
 
@@ -25,7 +29,6 @@ public class CMrefresher extends ListActivity {
     String buildType;
     boolean isCyanogen;
 
-    /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,14 +36,12 @@ public class CMrefresher extends ListActivity {
 
         String line;
         String[] prop, subprop;
-        
 
-        ArrayList<ContactItem> list = new ArrayList<ContactItem>();
+        ArrayList<Message> list = new ArrayList<Message>();
 
         try {
             TextView textView = (TextView) findViewById(R.id.status);
 
-            ArrayList<String> processList = new ArrayList<String>();
             java.lang.Process p = Runtime.getRuntime().exec("getprop");
             BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream()));
             while ((line = input.readLine()) != null) {
@@ -54,37 +55,51 @@ public class CMrefresher extends ListActivity {
                     SimpleDateFormat inputFormatter = new SimpleDateFormat("MMddyyyy");
                     buildDate = inputFormatter.parse(subprop[2]);
                     product = subprop[4].toLowerCase();
-                    processList.add(line);
                 }
-/*                if (prop[0].contentEquals("[ro.build.product]")) {
-                    product = prop[1].substring(1, prop[1].length() - 1);
-                }
-  */
             }
             input.close();
-            if (isCyanogen){
-              SimpleDateFormat outputFormatter = new SimpleDateFormat("dd-MMM-yyyy");
-              textView.setText("Cyanogen 7 " + buildType + " build on " + outputFormatter.format(buildDate) + " for " + product);
+            if (isCyanogen) {
+                SimpleDateFormat outputFormatter = new SimpleDateFormat("dd-MMM-yyyy");
+                textView.setText("Cyanogen 7 " + buildType + " build on " + outputFormatter.format(buildDate) + " for " + product);
             }
         } catch (Exception err) {
             System.out.println(err.toString());
         }
 
         try {
-            AndroidSaxFeedParser feedParser = new AndroidSaxFeedParser("http://cm-nightlies.appspot.com/rss?device="+ product);
-            List<Message> feed = feedParser.parse();
-            ListIterator itr = feed.listIterator();
-            while (itr.hasNext()) {
-                Message message = (Message) itr.next();
-                list.add(new ContactItem(message.getTitle(), message.getDate()));
-            }
-
-            ListAdapter adapter = new SimpleAdapter(
-                    this, list, R.layout.list,
-                    new String[]{ContactItem.TITLE, ContactItem.DATE},
-                    new int[]{R.id.title, R.id.date});
+            AndroidSaxFeedParser feedParser = new AndroidSaxFeedParser("http://cm-nightlies.appspot.com/rss?device=" + product);
+            list = (ArrayList) feedParser.parse();
+            ListAdapter adapter = new ArrayAdapter<Message>(
+                    this, R.layout.list, R.id.title, list);
 
             setListAdapter(adapter);
+            ListView lv = getListView();
+            lv.setTextFilterEnabled(true);
+
+            lv.setOnItemClickListener(new OnItemClickListener() {
+
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    Message message = (Message) parent.getItemAtPosition(position);
+
+                    AlertDialog alert = new AlertDialog.Builder(CMrefresher.this).setNegativeButton("No", new DialogInterface.OnClickListener() {
+
+                        public void onClick(DialogInterface dialog, int id) {
+                            dialog.cancel();
+                        }
+                    }).setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+
+                        public void onClick(DialogInterface dialog, int id) {
+
+                            dialog.cancel();
+                        }
+                    }).create();
+
+                    alert.setTitle("Download Now?");
+                    alert.setMessage(message.getTitle() + "\n" + message.getDate()+"\n"+ message.getDescription());
+                    alert.show();
+
+                }
+            });
         } catch (RuntimeException e) {
             AlertDialog alertDialog = new AlertDialog.Builder(this).create();
             alertDialog.setTitle("Sorry...");
