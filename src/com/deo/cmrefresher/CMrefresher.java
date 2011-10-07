@@ -6,6 +6,7 @@ import java.net.URISyntaxException;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 
 import java.text.SimpleDateFormat;
 
@@ -25,10 +26,6 @@ import android.widget.ListView;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
-import java.util.Iterator;
-import java.util.ListIterator;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -101,33 +98,33 @@ public class CMrefresher extends ListActivity {
                         Message msgPrev;
                         /*
                         while (iter.hasNext()) {
-                            msgPrev = msg;
-                            if (iter.hasNext()) {
-                                msg = (Message) iter.next();
-                            }
-                            if (updatedAt.after(msg.getDateObj())) {
-                                break;
-                            }
-
-                            if (updatedAt.after(msgPrev.getDateObj())) {
-                                msg.setDescription(msg.getDescription() + "\n" + commit.getString("project") + ": " + commit.getString("subject"));
-                            }
-
+                        msgPrev = msg;
+                        if (iter.hasNext()) {
+                        msg = (Message) iter.next();
+                        }
+                        if (updatedAt.after(msg.getDateObj())) {
+                        break;
+                        }
+                        
+                        if (updatedAt.after(msgPrev.getDateObj())) {
+                        msg.setDescription(msg.getDescription() + "\n" + commit.getString("project") + ": " + commit.getString("subject"));
+                        }
+                        
                         } */
-                    } catch (ParseException ex) {
-                        Logger.getLogger(CMrefresher.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (ParseException e) {
+                        throw new RuntimeException(e);
                     }
 
                 }
 
-            } catch (MalformedURLException ex) {
-                Logger.getLogger(CMrefresher.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (URISyntaxException ex) {
-                Logger.getLogger(CMrefresher.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (JSONException ex) {
-                Logger.getLogger(CMrefresher.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (IOException ex) {
-                Logger.getLogger(CMrefresher.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (MalformedURLException e) {
+                throw new RuntimeException(e);
+            } catch (URISyntaxException e) {
+                throw new RuntimeException(e);
+            } catch (JSONException e) {
+                throw new RuntimeException(e);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
             }
 
 
