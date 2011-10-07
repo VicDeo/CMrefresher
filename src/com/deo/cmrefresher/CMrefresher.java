@@ -48,8 +48,6 @@ public class CMrefresher extends ListActivity {
         ArrayList<Message> list = new ArrayList<Message>();
         TextView textView = (TextView) findViewById(R.id.status);
         try {
-
-
             java.lang.Process p = Runtime.getRuntime().exec("getprop");
             BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream()));
             while ((line = input.readLine()) != null) {
@@ -96,20 +94,19 @@ public class CMrefresher extends ListActivity {
                         textView.setText(updatedAt.toString());
                         Message msg = (Message) iter.next();
                         Message msgPrev;
-                        /*
-                        while (iter.hasNext()) {
-                        msgPrev = msg;
-                        if (iter.hasNext()) {
-                        msg = (Message) iter.next();
-                        }
-                        if (updatedAt.after(msg.getDateObj())) {
-                        break;
-                        }
-                        
-                        if (updatedAt.after(msgPrev.getDateObj())) {
-                        msg.setDescription(msg.getDescription() + "\n" + commit.getString("project") + ": " + commit.getString("subject"));
-                        }
-                        
+                   /*     while (iter.hasNext()) {
+                            msgPrev = msg.copy();
+                            if (iter.hasNext()) {
+                                msg = (Message) iter.next();
+                            }
+                            if (updatedAt.after(msg.getDateObj())) {
+                                break;
+                            }
+
+                            if (updatedAt.after(msgPrev.getDateObj())) {
+                                msg.setDescription(msg.getDescription() + "\n" + commit.getString("project") + ": " + commit.getString("subject"));
+                            }
+
                         } */
                     } catch (ParseException e) {
                         throw new RuntimeException(e);
@@ -126,8 +123,6 @@ public class CMrefresher extends ListActivity {
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
-
-
 
             ListAdapter adapter = new ArrayAdapter<Message>(
                     this, R.layout.list, R.id.title, list);
