@@ -16,7 +16,7 @@ public class Message implements Comparable<Message> {
             new SimpleDateFormat("dd MMM yyyy HH:mm:ss Z");
     private String title;
     private URL link;
-    private String description;
+    private String description ="";
     private Date date;
     private String adate;
 
@@ -48,10 +48,16 @@ public class Message implements Comparable<Message> {
         this.description = description.trim();
     }
 
+    
+    
     public String getDate() {
         return OUTPUTFORMATTER.format(this.date);
     }
 
+    public Date getDateObj() {
+        return date;
+    }
+    
     public void setDate(String date) {
         // pad the date if necessary
         while (!date.endsWith("00")) {
