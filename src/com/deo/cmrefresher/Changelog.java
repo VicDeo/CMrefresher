@@ -47,7 +47,7 @@ public class Changelog {
             }
             in.close();
             result = str.toString();
-        } catch (Exception ex) {
+        } catch (Exception e) {
             result = "Error";
         }
         return result;

@@ -84,30 +84,30 @@ public class CMrefresher extends ListActivity {
                 JSONArray nightlies = changelog.getData();
 
                 int i;
-                Iterator iter = list.iterator();
                 for (i = 0; i < nightlies.length(); i++) {
                     JSONObject commit = nightlies.getJSONObject(i);
                     String updated = commit.getString("last_updated");
                     SimpleDateFormat inputFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                     try {
                         Date updatedAt = inputFormatter.parse(updated.trim());
-                        textView.setText(updatedAt.toString());
-                        Message msg = (Message) iter.next();
-                        Message msgPrev;
-                   /*     while (iter.hasNext()) {
-                            msgPrev = msg.copy();
-                            if (iter.hasNext()) {
-                                msg = (Message) iter.next();
-                            }
+                        Message msg = new Message();
+                        Message targetMsg = new Message();
+                        Iterator iter = list.iterator();
+
+                        while (iter.hasNext()) {
+                            msg = (Message) iter.next();
                             if (updatedAt.after(msg.getDateObj())) {
                                 break;
                             }
+                            targetMsg = msg;
+                        }
 
-                            if (updatedAt.after(msgPrev.getDateObj())) {
-                                msg.setDescription(msg.getDescription() + "\n" + commit.getString("project") + ": " + commit.getString("subject"));
-                            }
+                        if (targetMsg != msg) {
+                            targetMsg.setDescription(targetMsg.getDescription()
+                                    + "\n" + commit.getString("project") + ": "
+                                    + commit.getString("subject") + "\n");
+                        }
 
-                        } */
                     } catch (ParseException e) {
                         throw new RuntimeException(e);
                     }
@@ -134,7 +134,7 @@ public class CMrefresher extends ListActivity {
             lv.setOnItemClickListener(new OnItemClickListener() {
 
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    Message message = (Message) parent.getItemAtPosition(position);
+                    final Message message = (Message) parent.getItemAtPosition(position);
 
                     AlertDialog alert = new AlertDialog.Builder(CMrefresher.this).setNegativeButton("No", new DialogInterface.OnClickListener() {
 
@@ -146,13 +146,13 @@ public class CMrefresher extends ListActivity {
 
                         public void onClick(DialogInterface dialog, int id) {
 
-                            dialog.cancel();
-                            dialog.dismiss();
+                           Loader loader = new Loader(message.getLink(), message.getTitle());
+
                         }
                     }).create();
 
                     alert.setTitle("Download Now?");
-                    alert.setMessage(message.getTitle() + "\n" + message.getDate() + "\n" + message.getDescription());
+                    alert.setMessage(message.getTitle() + "\n" + message.getDescription());
                     alert.show();
 
                 }

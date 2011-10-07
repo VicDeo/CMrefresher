@@ -34,7 +34,8 @@ public class Message implements Comparable<Message> {
 
     public void setLink(String link) {
         try {
-            this.link = new URL(link);
+            this.link = new URL(
+                    "http://download.cyanogenmod.com/get/"+link.split("#")[1]);
         } catch (MalformedURLException e) {
             throw new RuntimeException(e);
         }
@@ -45,7 +46,7 @@ public class Message implements Comparable<Message> {
     }
 
     public void setDescription(String description) {
-        this.description = description.trim();
+        this.description = description;
     }
 
     
