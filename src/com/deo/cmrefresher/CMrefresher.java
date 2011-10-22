@@ -1,8 +1,5 @@
 package com.deo.cmrefresher;
 
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URISyntaxException;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -27,7 +24,6 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 public class CMrefresher extends ListActivity {
@@ -43,42 +39,40 @@ public class CMrefresher extends ListActivity {
         setContentView(R.layout.main);
 
         String line;
-        String[] prop, subprop;
+        String[] subprop;
 
         ArrayList<Message> list = new ArrayList<Message>();
         TextView textView = (TextView) findViewById(R.id.status);
         try {
-            java.lang.Process p = Runtime.getRuntime().exec("getprop");
-            BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream()));
-            while ((line = input.readLine()) != null) {
+            try {
+                java.lang.Process p = Runtime.getRuntime().exec("getprop ro.modversion");
+                BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream()));
+                line = input.readLine();
+                input.close();
+                subprop = line.split("-");
+                isCyanogen = subprop[0].contentEquals("CyanogenMod") && subprop[1].contentEquals("7");
 
-                prop = line.split(": ");
-                if (prop[0].contentEquals("[ro.modversion]")) {
-                    prop[1] = prop[1].substring(1, prop[1].length() - 1);
-                    subprop = prop[1].split("-");
-                    isCyanogen = subprop[0].contentEquals("CyanogenMod") && subprop[1].contentEquals("7");
+                if (isCyanogen) {
                     buildType = subprop[3];
                     SimpleDateFormat inputFormatter = new SimpleDateFormat("MMddyyyy");
                     buildDate = inputFormatter.parse(subprop[2]);
                     product = subprop[4].toLowerCase();
-                }
-            }
-            input.close();
-            if (isCyanogen) {
-                SimpleDateFormat outputFormatter = new SimpleDateFormat("dd-MMM-yyyy");
-                textView.setText("Cyanogen 7 " + buildType + " build on " + outputFormatter.format(buildDate) + " for " + product);
-            }
-        } catch (Exception err) {
-            System.out.println(err.toString());
-        }
 
-        try {
+                    SimpleDateFormat outputFormatter = new SimpleDateFormat("dd-MMM-yyyy");
+                    textView.setText("Cyanogen 7 " + buildType + " build on " + outputFormatter.format(buildDate) + " for " + product);
+                } else {
+                    textView.setText("The current firmware is not Cyanogen 7");
+                }
+
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
 
             AndroidSaxFeedParser feedParser = new AndroidSaxFeedParser("http://cm-nightlies.appspot.com/rss?device=" + product);
             list = (ArrayList) feedParser.parse();
 
-
             Changelog changelog;
+
             try {
                 changelog = new Changelog("http://cm-nightlies.appspot.com/changelog/?device=" + product);
                 JSONArray nightlies = changelog.getData();
@@ -114,13 +108,7 @@ public class CMrefresher extends ListActivity {
 
                 }
 
-            } catch (MalformedURLException e) {
-                throw new RuntimeException(e);
-            } catch (URISyntaxException e) {
-                throw new RuntimeException(e);
-            } catch (JSONException e) {
-                throw new RuntimeException(e);
-            } catch (IOException e) {
+            } catch (Exception e) {
                 throw new RuntimeException(e);
             }
 
@@ -146,7 +134,7 @@ public class CMrefresher extends ListActivity {
 
                         public void onClick(DialogInterface dialog, int id) {
 
-                           Loader loader = new Loader(message.getLink(), message.getTitle());
+                            Loader loader = new Loader(message.getLink(), message.getTitle());
 
                         }
                     }).create();
