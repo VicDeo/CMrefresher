@@ -2,12 +2,12 @@ package com.deo.cmrefresher;
 
 import java.util.ArrayList;
 import java.util.List;
+import android.util.Xml;
 
 import android.sax.Element;
 import android.sax.EndElementListener;
 import android.sax.EndTextElementListener;
 import android.sax.RootElement;
-import android.util.Xml;
 
 public class AndroidSaxFeedParser extends BaseFeedParser {
 

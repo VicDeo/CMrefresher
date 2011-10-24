@@ -1,29 +1,24 @@
 package com.deo.cmrefresher;
 
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
-
 import java.text.SimpleDateFormat;
-
+import java.text.ParseException;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-
 import android.app.ListActivity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.ListAdapter;
-
 import android.widget.TextView;
 import android.widget.ListView;
-
+import android.widget.ListAdapter;
+import android.widget.ArrayAdapter;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.ArrayAdapter;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
