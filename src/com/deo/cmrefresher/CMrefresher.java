@@ -13,6 +13,7 @@ import java.io.InputStreamReader;
 import android.app.ListActivity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ListAdapter;
@@ -123,19 +124,19 @@ public class CMrefresher extends ListActivity {
 
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     final Message message = (Message) parent.getItemAtPosition(position);
-
+                    
                     AlertDialog alert = new AlertDialog.Builder(CMrefresher.this).setNegativeButton("No", new DialogInterface.OnClickListener() {
-
                         public void onClick(DialogInterface dialog, int id) {
                             dialog.cancel();
                             dialog.dismiss();
                         }
                     }).setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-
+                        
                         public void onClick(DialogInterface dialog, int id) {
-
-                            Loader loader = new Loader(message.getLink(), message.getTitle());
-
+                            Intent downloadIntent = new Intent(CMrefresher.this, Loader.class);
+                            downloadIntent.putExtra("link", message.getLink());
+                            downloadIntent.putExtra("title", message.getTitle());
+                            startService(downloadIntent);
                         }
                     }).create();
 

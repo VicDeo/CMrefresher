@@ -1,6 +1,10 @@
 package com.deo.cmrefresher;
 
+import android.app.Service;
+import android.content.Intent;
 import android.os.Environment;
+import android.os.IBinder;
+import android.widget.Toast;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
@@ -11,10 +15,21 @@ import java.net.URL;
  *
  * @author deo
  */
-public class Loader {
+public class Loader extends Service {
 
-    public Loader(URL u, String title) {
+    public IBinder onBind(Intent intent) {
+        return null;
+    }
+
+    @Override
+    public void onCreate() {
+    }
+
+    @Override
+    public void onStart(Intent intent, int startid) {
         try {
+            URL u = new URL(intent.getStringExtra("link"));
+            String title = intent.getStringExtra("title");
             HttpURLConnection c = (HttpURLConnection) u.openConnection();
             c.setRequestMethod("GET");
             c.setDoOutput(true);
@@ -35,5 +50,11 @@ public class Loader {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+        this.stopSelf();
+    }
+
+    @Override
+    public void onDestroy() {
+        Toast.makeText(this, "CMrefresher: download has been completed", Toast.LENGTH_LONG).show();
     }
 }
