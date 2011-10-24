@@ -133,7 +133,7 @@ public class CMrefresher extends ListActivity {
                     }).setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                         
                         public void onClick(DialogInterface dialog, int id) {
-                            Intent downloadIntent = new Intent(CMrefresher.this, Loader.class);
+                            Intent downloadIntent = new Intent(CMrefresher.this, LoaderService.class);
                             downloadIntent.putExtra("link", message.getLink());
                             downloadIntent.putExtra("title", message.getTitle());
                             startService(downloadIntent);

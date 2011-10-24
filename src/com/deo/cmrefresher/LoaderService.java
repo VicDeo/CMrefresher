@@ -15,7 +15,7 @@ import java.net.URL;
  *
  * @author deo
  */
-public class Loader extends Service {
+public class LoaderService extends Service {
 
     public IBinder onBind(Intent intent) {
         return null;
