@@ -117,21 +117,28 @@ public class CMrefresher extends ListActivity {
 
             lv.setOnItemClickListener(new OnItemClickListener() {
 
-                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    final Message message = (Message) parent.getItemAtPosition(position);
-                    
+                public void onItemClick(AdapterView<?> parentItem, View view, int position, long id) {
+                    final Message message = (Message) parentItem.getItemAtPosition(position);
+
                     AlertDialog alert = new AlertDialog.Builder(CMrefresher.this).setNegativeButton("No", new DialogInterface.OnClickListener() {
+
                         public void onClick(DialogInterface dialog, int id) {
                             dialog.cancel();
                             dialog.dismiss();
                         }
                     }).setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                        
+
                         public void onClick(DialogInterface dialog, int id) {
-                            Intent downloadIntent = new Intent(CMrefresher.this, LoaderService.class);
-                            downloadIntent.putExtra("link", message.getLink());
-                            downloadIntent.putExtra("title", message.getTitle());
-                            startService(downloadIntent);
+                            try {
+                                Intent downloadIntent = new Intent(CMrefresher.this, LoaderService.class);
+                                downloadIntent.putExtra("title", message.getTitle());
+                                downloadIntent.putExtra("link", message.getLink().toString());
+                                startService(downloadIntent);
+                            } catch (Exception e) {
+                                throw new RuntimeException(e);
+                            }
+                            dialog.cancel();
+                            dialog.dismiss();
                         }
                     }).create();
 

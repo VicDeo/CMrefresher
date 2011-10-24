@@ -28,13 +28,14 @@ public class LoaderService extends Service {
     @Override
     public void onStart(Intent intent, int startid) {
         try {
+
             URL u = new URL(intent.getStringExtra("link"));
             String title = intent.getStringExtra("title");
             HttpURLConnection c = (HttpURLConnection) u.openConnection();
             c.setRequestMethod("GET");
             c.setDoOutput(true);
             c.connect();
-
+            Toast.makeText(this, "CMrefresher: download has been started", Toast.LENGTH_LONG).show();
             File root = Environment.getExternalStorageDirectory();
             FileOutputStream f = new FileOutputStream(new File(root, title));
 
@@ -46,11 +47,11 @@ public class LoaderService extends Service {
                 f.write(buffer, 0, len1);
             }
             f.close();
-
+            this.stopSelf();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        this.stopSelf();
+
     }
 
     @Override
