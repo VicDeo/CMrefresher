@@ -39,8 +39,9 @@ public class LoaderService extends Service {
     public void onStart(Intent intent, int startid) {
         String line;
         String[] subprop;
-        
-        showNotification();
+        File root = Environment.getExternalStorageDirectory();
+
+        showNotification("Download in progress");
 
         try {
 
@@ -51,7 +52,7 @@ public class LoaderService extends Service {
             c.setDoOutput(true);
             c.connect();
             Toast.makeText(this, "CMrefresher: download has been started", Toast.LENGTH_LONG).show();
-            File root = Environment.getExternalStorageDirectory();
+
             FileOutputStream f = new FileOutputStream(new File(root, title));
 
             InputStream in = c.getInputStream();
@@ -64,7 +65,7 @@ public class LoaderService extends Service {
             f.close();
 
 
-            java.lang.Process p = Runtime.getRuntime().exec("md5sum "+root.getAbsolutePath()+title);
+            java.lang.Process p = Runtime.getRuntime().exec("md5sum " + root.getAbsolutePath() + "/" + title);
             BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream()));
             line = input.readLine();
             input.close();
@@ -78,7 +79,7 @@ public class LoaderService extends Service {
         this.stopSelf();
     }
 
-    private void showNotification() {
+    private void showNotification(String message) {
         CharSequence text = "CMrefresher";
         int icon = R.drawable.icon;
         Notification notification = new Notification(icon, text, System.currentTimeMillis());
@@ -86,22 +87,13 @@ public class LoaderService extends Service {
         PendingIntent contentIntent = PendingIntent.getActivity(this, 0,
                 intent, 0);
 
-        notification.setLatestEventInfo(this, "CMrefresher", "Download in progress", contentIntent);
+        notification.setLatestEventInfo(this, "CMrefresher", message, contentIntent);
         notifyMgr.notify(105, notification);
     }
 
     @Override
     public void onDestroy() {
         notifyMgr.cancel(105);
-        CharSequence text = "CMrefresher";
-        int icon = R.drawable.icon;
-        Notification notification = new Notification(icon, text, System.currentTimeMillis());
-        Intent intent = new Intent(this, CMrefresher.class);
-        PendingIntent contentIntent = PendingIntent.getActivity(this, 0,
-                intent, 0);
-
-        notification.setLatestEventInfo(this, "CMrefresher", "Download finished. Checksum:" + checksum, contentIntent);
-        notifyMgr.notify(105, notification);
-
+        showNotification("Completed. Checksum=" + checksum);
     }
 }

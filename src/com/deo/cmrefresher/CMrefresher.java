@@ -8,9 +8,13 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import android.app.ListActivity;
 import android.app.AlertDialog;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.ListView;
@@ -120,10 +124,33 @@ public class CMrefresher extends ListActivity {
 
                         public void onClick(DialogInterface dialog, int id) {
 
-                            Intent downloadIntent = new Intent(CMrefresher.this, LoaderService.class);
-                            downloadIntent.putExtra("title", message.getTitle());
-                            downloadIntent.putExtra("link", message.getLink().toString());
-                            startService(downloadIntent);
+                            Thread t = new Thread() {
+
+                                @Override
+                                public void run() {
+                                ServiceConnection conn = new ServiceConnection() {
+                                    @Override
+                                    public void onServiceConnected(ComponentName name, IBinder service) {
+                                    }
+
+                                    @Override
+                                    public void onServiceDisconnected(ComponentName arg0) {
+                                    }
+                                };
+                                    
+                                    Intent downloadIntent = new Intent(getApplicationContext(), LoaderService.class);
+                                    downloadIntent.putExtra("title", message.getTitle());
+                                    downloadIntent.putExtra("link", message.getLink().toString());
+
+                                    getApplicationContext().bindService(
+                                            downloadIntent,
+                                            conn,
+                                            Context.BIND_AUTO_CREATE);
+
+                                    startService(downloadIntent);
+                                }
+                            };
+                            t.start();
                             dialog.cancel();
                             dialog.dismiss();
                         }
